@@ -1,6 +1,6 @@
 import subprocess
 import os
-from pwn import *
+from pwn import log
 from common import err
 
 arch_dict = {"amd64":"x86_64-linux-gnu","i386":"i386-linux-gnu"}
@@ -51,15 +51,19 @@ class LinkerPatcher():
 			return self.ver
 
 	def patch(self):
-		deb_url = f"http://security.ubuntu.com/ubuntu/pool/main/g/glibc/libc6_{self.get_version()}_{self.arch}.deb"
+		deb_url = f"https://launchpad.net/ubuntu/+archive/primary/+files/libc6_{self.get_version()}_{self.arch}.deb"
 		self.ver = self.ver[:4]
+
 		try:
 			subprocess.run(['mkdir', '/tmp/sps'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			log.info("Downloading deb package...")
-			subprocess.run(['wget', deb_url, '-O', '/tmp/sps/libc.deb'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+			wget = subprocess.Popen(['wget', deb_url, '-O', '/tmp/sps/libc.deb'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+			wget.communicate()
+			if wget.returncode != 0:
+				err("File not found it database")
 			log.info("Extracting deb package...")
 			subprocess.run(['ar','x','/tmp/sps/libc.deb'], cwd="/tmp/sps/", stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-			subprocess.run(['tar', 'xvf', 'data.tar.xz'], cwd="/tmp/sps", stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+			subprocess.run(['sh','-c','tar xvf data.tar.*'], cwd="/tmp/sps", stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 		except:
 			subprocess.run(['rm','-r','/tmp/sps'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			err("Unable to download/extract deb package!")

