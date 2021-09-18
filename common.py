@@ -49,15 +49,15 @@ def find_offset(args,n):
 	return(cyclic_find(core.fault_addr,n=n))
 
 
-def start(remote,chall,libc):
+def start(remote_ip,chall,libc):
 	if libc == None:
 		env = {"PWD":os.getcwd()}
 	else:
 		env = {"LD_PRELOAD":libc}
 
-	if remote == "gdb":
+	if remote_ip == "gdb":
 		return gdb.debug(chall.path, env=env, gdbscript="break main")
-	elif remote:
-		return remote(remote.split(":")[0],int(remote.split(":")[1]))
+	elif remote_ip:
+		return remote(remote_ip.split(":")[0],int(remote_ip.split(":")[1]))
 	else:
 		return process(chall.path, env=env)

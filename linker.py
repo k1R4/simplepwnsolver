@@ -1,6 +1,6 @@
 import subprocess
 import os
-from pwn import log
+from pwn import *
 from common import err
 
 arch_dict = {"amd64":"x86_64-linux-gnu","i386":"i386-linux-gnu"}
@@ -17,7 +17,10 @@ class LinkerPatcher():
 	def compatibility(self):
 		if self.libc == None:
 			err("Libc not provided!")
-		context.binary = ELF(self.libc)
+		try:
+			context.binary = ELF(self.libc)
+		except:
+			err("Invaild libc binary!")
 		self.arch = context.arch
 		if self.arch not in ["amd64","i386"]:
 			err("Architecture not supported!")
@@ -64,6 +67,7 @@ class LinkerPatcher():
 			log.info("Extracting deb package...")
 			subprocess.run(['ar','x','/tmp/sps/libc.deb'], cwd="/tmp/sps/", stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			subprocess.run(['sh','-c','tar xvf data.tar.*'], cwd="/tmp/sps", stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+			
 		except:
 			subprocess.run(['rm','-r','/tmp/sps'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			err("Unable to download/extract deb package!")

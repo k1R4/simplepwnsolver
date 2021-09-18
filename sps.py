@@ -50,7 +50,10 @@ if __name__ == "__main__":
 	if args.verbose:
 		context.log_level = "debug"
 
-	args.chall = context.binary = ELF(args.binary)
+	try:
+		args.chall = context.binary = ELF(args.binary)
+	except:
+		err("Invalid challenge binary!")
 
 	if args.mode not in modes:
 		log.failure("Invalid mode!")
