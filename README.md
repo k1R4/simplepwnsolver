@@ -7,7 +7,7 @@ Still want to install?
 ```
 git clone https://github.com/k1R4/simplepwnsolver ~/.simplepwnsolver
 chmod +x ~/.simplepwnsolver/sps.py
-pip install r ~/.simplepwnsolver/requirements.txt
+pip install -r ~/.simplepwnsolver/requirements.txt
 sudo ln -s ~/.simplepwnsolver/sps.py /bin/sps
 sps -h
 ```
