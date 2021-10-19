@@ -6,6 +6,9 @@ def err(error):
 	log.failure(error)
 	exit()
 
+def cli_run(cmd,cwd):
+	subprocess.run(cmd, cwd=cwd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+
 def send_payload(payload,inputs,io):
 	for i in inputs:
 		if len(i) != 2 or i[1] != "":

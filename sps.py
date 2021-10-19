@@ -39,6 +39,7 @@ if __name__ == "__main__":
 
 	if args.mode == "linker":
 		LinkerPatcher(args)
+		exit()
 	elif args.mode == "template":
 		Template(args)
 
